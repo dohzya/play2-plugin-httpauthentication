@@ -1,0 +1,97 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Play2-plugin-httpauthentication by dohzya</title>
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/pygment_trac.css">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.7.1/jquery.min.js"></script>
+    <script src="javascripts/respond.js"></script>
+    <!--[if lt IE 9]>
+      <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+    <!--[if lt IE 8]>
+    <link rel="stylesheet" href="stylesheets/ie.css">
+    <![endif]-->
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+
+  </head>
+  <body>
+      <div id="header">
+        <nav>
+          <li class="fork"><a href="https://github.com/dohzya/play2-plugin-httpauthentication">View On GitHub</a></li>
+          <li class="downloads"><a href="https://github.com/dohzya/play2-plugin-httpauthentication/zipball/master">ZIP</a></li>
+          <li class="downloads"><a href="https://github.com/dohzya/play2-plugin-httpauthentication/tarball/master">TAR</a></li>
+          <li class="title">DOWNLOADS</li>
+        </nav>
+      </div><!-- end header -->
+
+    <div class="wrapper">
+
+      <section>
+        <div id="title">
+          <h1>Play2-plugin-httpauthentication</h1>
+          <p>Basic and Digest HTTP Authentication helpers for Play 2</p>
+          <hr>
+          <span class="credits left">Project maintained by <a href="https://github.com/dohzya">dohzya</a></span>
+          <span class="credits right">Hosted on GitHub Pages &mdash; Theme by <a href="http://twitter.com/#!/michigangraham">mattgraham</a></span>
+        </div>
+
+        <h1>HTTP Authentication</h1>
+
+<p>This Play 2 plugin provide helpers for HTTP Authentication.</p>
+
+<h2>Basic Authentication</h2>
+
+<p>There are 2 ways to use Basic Authentication:</p>
+
+<ul>
+<li>Providing the list of username-&gt;password pairs (both in plain-text).</li>
+<li>Providing an check function which will be called with the given informations.</li>
+</ul><h2>Digest Authentication</h2>
+
+<p>The Digest Authentication allows to check if 2 passwords are equals, but it need the plain-text password (by design).
+Thus this helper can only be called with a username-&gt;password list.</p>
+
+<h2>Example</h2>
+
+<div class="highlight">
+<pre><span class="k">import</span> <span class="nn">play.modules.httpauthentication.HTTPAuthentication</span>
+
+<span class="k">object</span> <span class="nc">BackOffice</span> <span class="k">extends</span> <span class="nc">Controller</span> <span class="k">with</span> <span class="nc">HTTPAuthentication</span> <span class="o">{</span>
+
+  <span class="cm">/**</span>
+<span class="cm">   * Invokes the authentication procedure.</span>
+<span class="cm">   *</span>
+<span class="cm">   * It provides the valid user object to the given action, instead of a Map.</span>
+<span class="cm">   */</span>
+  <span class="k">def</span> <span class="nc">Authenticate</span><span class="o">(</span><span class="n">action</span><span class="k">:</span> <span class="kt">User</span> <span class="o">=&gt;</span> <span class="nc">Result</span><span class="o">)(</span><span class="k">implicit</span> <span class="n">request</span><span class="k">:</span> <span class="kt">Request</span><span class="o">[</span><span class="kt">Any</span><span class="o">])</span><span class="k">:</span> <span class="kt">Result</span> <span class="o">=</span> <span class="o">{</span>
+    <span class="nc">BasicAuthentication</span><span class="o">(</span><span class="nc">Map</span><span class="o">(</span><span class="s">"realm"</span> <span class="o">-&gt;</span> <span class="s">"Back Office"</span><span class="o">)){</span> <span class="n">auth</span> <span class="k">=&gt;</span>
+      <span class="nc">User</span><span class="o">.</span><span class="n">findAndCheck</span><span class="o">(</span><span class="n">auth</span><span class="o">(</span><span class="s">"username"</span><span class="o">),</span> <span class="n">auth</span><span class="o">(</span><span class="s">"password"</span><span class="o">))</span>
+    <span class="o">}(</span><span class="n">action</span><span class="o">)</span>
+  <span class="o">}</span>
+
+  <span class="k">def</span> <span class="n">index</span> <span class="k">=</span> <span class="nc">Action</span> <span class="o">{</span> <span class="k">implicit</span> <span class="n">request</span> <span class="k">=&gt;</span>
+    <span class="nc">Authenticate</span> <span class="o">{</span> <span class="k">implicit</span> <span class="n">user</span> <span class="k">=&gt;</span>
+      <span class="nc">Ok</span><span class="o">(</span><span class="n">html</span><span class="o">.</span><span class="n">admin</span><span class="o">.</span><span class="n">index</span><span class="o">())</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+  <span class="k">def</span> <span class="n">logs</span> <span class="k">=</span> <span class="nc">Action</span> <span class="o">{</span> <span class="k">implicit</span> <span class="n">request</span> <span class="k">=&gt;</span>
+    <span class="nc">Authenticate</span> <span class="o">{</span> <span class="k">implicit</span> <span class="n">user</span> <span class="k">=&gt;</span>
+      <span class="nc">Ok</span><span class="o">(</span><span class="n">html</span><span class="o">.</span><span class="n">admin</span><span class="o">.</span><span class="n">logs</span><span class="o">())</span>
+    <span class="o">}</span>
+  <span class="o">}</span>
+
+<span class="o">}</span>
+</pre>
+</div>
+
+      </section>
+
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><!--<![endif]-->
+    
+  </body>
+</html>
