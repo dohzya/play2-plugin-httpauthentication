@@ -20,9 +20,9 @@ trait HTTPAuthentication {
    */
   protected def authenticate[A](parser: Parser, opts: Map[String, String])
                                (check: Map[String,String] => Option[A])
-                               (onSuccess: A => Result)
+                               (onSuccess: A => PlainResult)
                                (onFailure: Option[Map[String,String]] => String)
-                               (implicit request: Request[Any]): Result = {
+                               (implicit request: Request[Any]): PlainResult = {
     request.headers.get("Authorization").toRight(None).right flatMap { authHeader =>
       parser.parse(authHeader).toRight(None).right flatMap { a =>
         val auth = a + ("http-method" -> request.method)
@@ -47,8 +47,8 @@ trait HTTPAuthentication {
    * @param valid the list of valid username->password list
    */
   def BasicAuthentication(valid: Map[String, String], opts: Map[String, String])
-                         (action: ((String, String)) => Result)
-                         (implicit request: Request[Any]): Result =
+                         (action: ((String, String)) => PlainResult)
+                         (implicit request: Request[Any]): PlainResult =
   {
     BasicAuthentication(opts){ auth =>
       val u = auth("username")
@@ -59,8 +59,8 @@ trait HTTPAuthentication {
 
   def BasicAuthentication[A](opts: Map[String, String])
                             (check: Map[String, String] => Option[A])
-                            (action: A => Result)
-                            (implicit request: Request[Any]): Result =
+                            (action: A => PlainResult)
+                            (implicit request: Request[Any]): PlainResult =
   {
     authenticate(BasicParser, opts)(check)(action){ auth =>
       val realm = opts.get("realm").getOrElse("Secured")
@@ -76,8 +76,8 @@ trait HTTPAuthentication {
    * @param valid the list of valid username->password list
    */
   def DigestAuthentication(valid: Map[String, String], opts: Map[String, String] = Map())
-                          (action: ((String, String)) => Result)
-                          (implicit request: Request[Any]): Result =
+                          (action: ((String, String)) => PlainResult)
+                          (implicit request: Request[Any]): PlainResult =
   {
     authenticate(DigestParser, opts){ auth =>
       if (auth("nonce") == opts.get("nonce").getOrElse(genNonce)) {
