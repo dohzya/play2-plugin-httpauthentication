@@ -32,7 +32,7 @@ trait HTTPAuthentication {
     case Right(res) => onSuccess(res)
     case Left(auth) =>
       auth map { a =>
-        play.api.Logger("application").debug("Bad authentication ("+a("username")+")")
+        Logger("auth").debug("Bad authentication ("+a("username")+")")
       }
       val errorMsg = opts.get("errorMsg").getOrElse("Not authorized")
       Unauthorized(errorMsg).withHeaders("WWW-Authenticate" -> onFailure(auth))
@@ -176,11 +176,11 @@ object HTTPAuthentication {
           parseAll(basicDecoded, decoded) match {
             case Success((u, p), _) => Some(Map("username" -> u, "password" -> p))
             case e =>
-              play.api.Logger("application").debug(e.toString)
+              Logger("auth").debug(e.toString)
               None
           }
         case e =>
-          play.api.Logger("application").debug(e.toString)
+          Logger("auth").debug(e.toString)
           None
       }
     }
@@ -203,7 +203,7 @@ object HTTPAuthentication {
       parseAll(digest, s) match {
         case Success(res, _) => Some(res)
         case e =>
-          play.api.Logger("application").debug(e.toString)
+          Logger("auth").debug(e.toString)
           None
       }
     }
