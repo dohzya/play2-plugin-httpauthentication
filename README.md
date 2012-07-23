@@ -16,6 +16,21 @@ Digest Authentication
 The Digest Authentication allows to check if 2 passwords are equals, but it need the plain-text password (by design).
 Thus this helper can only be called with a username->password list.
 
+Setting up with sbt
+-------------------
+
+Configure a new resolver:
+
+~~~scala
+resolvers += "HTTP Authentication" at "http://dohzya.github.com/play2-plugin-httpauthentication/"
+~~~
+
+Add the library dependency:
+
+~~~scala
+libraryDependencies +="play.modules.httpauthentication" %% "play-2.0-http-authentication-plugin" % "0.1-SNAPSHOT",
+~~~
+
 Example
 -------
 
