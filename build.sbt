@@ -8,4 +8,4 @@ resolvers += "Typesafe repository snapshots" at "http://repo.typesafe.com/typesa
 
 resolvers += "Typesafe repository releases" at "http://repo.typesafe.com/typesafe/releases/"
 
-libraryDependencies += "play" %% "play" % "2.1-SNAPSHOT"
+libraryDependencies += "play" %% "play" % "2.0.3"
